@@ -23,6 +23,7 @@ def extend_ambiguous_dna(seq):
    d = IUPAC.IUPACData.ambiguous_dna_values
    return [ list(map("".join, product(*map(d.get, seq)))) ]
 
+
 def tmok(probe,hi,lo):
     """check the tm of the primer returns true if within range false otherwise"""
     probeseq = Seq(str(probe), IUPAC.ambiguous_dna) # convert text to seqobjact
@@ -34,7 +35,14 @@ def tmok(probe,hi,lo):
     if (avetm < float(hi)) and (avetm > float(lo)): #check they are within the target temp
         return True
     else:
-        return False       
+        return False
+  
+# TODO: the Tm's for regular primers and PNA's are different. 
+# Update the function to access the PNA calculator on the PNABio site instead of using primer3-py      
+def pnabiotemp(probe):
+	"""Connect to PNABIO and use their calculator for Tm"""
+	pass
+	       
 
 def subprobes(probe,probeminlen,hi,lo):
     """Scans through all subsequences grater than the minimum length in a sequence appending subsequences meeting tm criteria to a list"""
