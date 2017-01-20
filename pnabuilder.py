@@ -24,13 +24,26 @@ def extend_ambiguous_dna(seq):
    return [ list(map("".join, product(*map(d.get, seq)))) ]
 
 
+def calc_pna_tm(probe):
+	"""Emperical PNA-DNA duplex estimation from Giesen et al. 1998 that uses DNA thermodynamic prediction from primer3."""
+	c0 = 20.97
+	c1 = 0.83
+	c2 = -26.13
+	c3 = 0.44
+	tmdna = primer3.calcTm(str(probe))
+	length = len(str(probe))
+	fpyr = (str(probe).count('C') + str(probe).count('G'))/length
+	tmpna = c0 + c1 * tmdna + +c2 * fpyr +c3 * length
+	return tmpna
+
+
 def tmok(probe,hi,lo):
     """check the tm of the primer returns true if within range false otherwise"""
     probeseq = Seq(str(probe), IUPAC.ambiguous_dna) # convert text to seqobjact
     probelist = extend_ambiguous_dna(probeseq) #  create a list of all combinations
     tm = [] 
     for i in probelist[0]: # for each ambiguous primer:
-        tm.append(primer3.calcTm(str(i))) # calculate the tm
+        tm.append(calc_pna_tm(probe)) # calculate the tm
     avetm =  float(sum(tm))/float(len(tm)) # average the tm's
     if (avetm < float(hi)) and (avetm > float(lo)): #check they are within the target temp
         return True
